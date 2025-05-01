@@ -3,23 +3,27 @@ Fetches 6 months of historical stock data for a given stock symbol using the jug
 This script assumes you have a project virtual environment set up and jugaad-data installed.
 """
 
-from fetch import fetch_stock_data
+from fetch import fetch_stock_data, fetch_stock_data_for_symbols
+from fileUtils import fetchTickers
+import pandas as pd
 
 def main():
-    """
-    Main function to get stock symbol from user and fetch/display data.
-    """
-    stock_symbol = input("Enter the stock symbol (e.g., SBIN, INFY): ").upper()
-    data = fetch_stock_data(stock_symbol)  # Get the DataFrame
+    
+    # Fetch all tickers from a given NSE Index
+    tickers = fetchTickers()
 
-    if data is not None:  # Check if data was successfully retrieved
-        # Print the first few rows of the DataFrame
-        print("\nFirst 5 rows of data:")
-        print(data.head().to_string())
+    data = fetch_stock_data_for_symbols(tickers) 
 
-        # Print the columns and their data types
-        print("\nColumn information:")
-        print(data.info())
+    print("\nFirst 3 symbols and their data:")
+    for i, (symbol, data) in enumerate(data.items()):
+        print(f"\nSymbol: {symbol}")
+        if data is not None:
+            print("Columns:", list(data.columns)) # Print the columns
+            print(data.head().to_string())
+        else:
+            print("No data available.")
+        if i >= 2:  # Stop after the first 3
+            break
 
 if __name__ == "__main__":
     main()
