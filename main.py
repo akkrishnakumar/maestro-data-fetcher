@@ -5,10 +5,22 @@ This script assumes you have a project virtual environment set up and jugaad-dat
 
 from fetch import fetch_stock_data, fetch_stock_data_for_symbols
 from fastapi import FastAPI, status
+from fastapi.middleware.cors import CORSMiddleware
 from fileUtils import fetchTickers
 import pandas as pd
 
 app = FastAPI(title="Stock Data API")
+
+# CORS
+origins = ["http://localhost:3000"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 
 @app.get("/stock_data/{ticker}", status_code=status.HTTP_200_OK)
 async def get_stock_data(ticker: str):
